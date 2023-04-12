@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const Waitlist = require("../model/waitlistModel");
 const sendEmail = require("../utils/sendEmail");
+const waitlist = require("../email/waitlist");
+const contentemail = require("../email/contentemail");
 
 
 const WaitList = asyncHandler(async (req, res) => {
@@ -23,46 +25,40 @@ const WaitList = asyncHandler(async (req, res) => {
     if (email) {
         let user = await Waitlist.findOne({ email })
 
-    if (user) {
-        res.status(400).json({
-            message: 'You are already on our waitlist',
-            success: false,
-        })
-    }   else {
-        Waitlist.create({
-            _id: new mongoose.Types.ObjectId(),
-            email,
-            name
-        })
-
-
+        if (user) {
+            res.status(400).json({
+                message: 'You are already on our waitlist',
+                success: false,
+            })
+        } else {
+            await Waitlist.create({
+                _id: new mongoose.Types.ObjectId(),
+                email,
+                name
+            })
+        }
     }
 
-}
-    //send waitlist mail
-    const subject = "Waitlist Confirmation";
-    const send_to = email;
-    const sent_from = "Flowday App <hello@seemetracker.com";
-    const reply_to = "no-reply@flowday.net";
-    const template = "waitlist";
-
     try {
-        await sendEmail(
-        subject,
-        send_to,
-        sent_from,
-        reply_to,
-        template,
-    );
-    res
-        .status(200)
-        .json({ success: true, message: "Waitlist Email Sent" });
+        //send waitlist mail
+        const emailTemplate = waitlist(name);
+        const to = email;
+        const subject = 'Thanks For Joining';
+        const html = emailTemplate.html;
+
+        await sendEmail(to, subject, html);
+        console.log('Welcome Email sent!');
+        res
+            .status(200)
+            .json({ success: true, message: "Waitlist Email Sent" });
     } catch (error) {
-    res.status(500);
-    throw new Error("Email not sent, please try again");
+        res.status(500);
+        throw new Error("Email not sent, please try again");
     }
 
 });
+
+
 
 const sendEmailToWaitlist = asyncHandler(async (req, res) => {
     const { title, content } = req.body;
@@ -71,25 +67,28 @@ const sendEmailToWaitlist = asyncHandler(async (req, res) => {
     const waitlistUsers = await Waitlist.find({}).select("email name -_id");
   
     // Send email to each email in database
-    for (let i = 0; i < waitlistUsers.length; i++) {
-      const user = waitlistUsers[i];
-      const subject = title;
-      const send_to = user.email;
-      const sent_from = "Flowday App <hello@seemetracker.com";
-      const reply_to = "no-reply@flowday.net";
-      const template = "content";
-      const name = user.name;
-      const emailContent = content;
-  
-      try {
-        await sendEmail(subject, send_to, sent_from, reply_to, template, name, emailContent);
-      } catch (error) {
-        console.log(`Error sending email to ${send_to}: ${error}`);
-      }
+    try {
+        for (let i = 0; i < waitlistUsers.length; i++) {
+            const user = waitlistUsers[i];
+            const emailTemplate = contentemail(user.name, content);
+            const subject = title;
+            const to = user.email;
+            const html = emailTemplate.html;
+        
+            await sendEmail(to, subject, html);
+            console.log('Welcome Email sent!');
+        }
+        res
+            .status(200)
+            .json({ success: true, message: "Waitlist Email Sent" });
+    } catch (error) {
+        res.status(500);
+        throw new Error("Email not sent, please try again");
     }
-  
-    res.status(200).json({ success: true, message: "Emails sent to waitlist" });
-  });  
+});
+
+
+
 
 module.exports = {
     WaitList,

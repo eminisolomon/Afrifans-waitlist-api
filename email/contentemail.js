@@ -1,4 +1,4 @@
-const welcomeEmail = function (name) {
+const contentEmail = function (name, content) {
     const html = `
     <!DOCTYPE html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -9,7 +9,7 @@ const welcomeEmail = function (name) {
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-  <title>Reset your Password</title>
+  <title>Some Random Email</title>
   <link
     href="https://fonts.googleapis.com/css?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700"
     rel="stylesheet" media="screen">
@@ -117,11 +117,10 @@ const welcomeEmail = function (name) {
                       style="--bg-opacity: 1; background-color: #ffffff; border-radius: 4px; font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 24px; padding: 48px; text-align: left; --text-opacity: 1; color: #626262;"
                       align="left">
 
-                      <p style="font-weight: 600; font-size: 18px; margin-bottom: 10px;margin-top: 10px">Dear ${name},</p>
+                      <p style="font-weight: 600; font-size: 18px; margin-bottom: 10px;margin-top: 10px">Hello ${name},</p>
 
                       <p style="margin: 0 0 24px;">
-                      Welcome to the Flowday App, where buying, selling, sending, and receiving USDT/USDC has never been easier! Our platform offers a simple and secure way to 
-                      manage your USDT/USDC transactions, allowing you to easily convert between USDT and other traditional currencies.
+                      ${content}
                       </p>
                       
                       <p style="margin: 0 0 24px;">
@@ -182,7 +181,7 @@ const welcomeEmail = function (name) {
 
 </html>`;
     const text = `
-        Reset Password, You recently requested to reset your password for your node-typescript-boilerplate account. Copy and paste it for reset password:
+        Welcome and thank you for joining our waitlist:
         ${name}
 
 If you did not requested a password reset, please ignore this email or reply to let us know. This password reset is only valid for the next 2 hours.`;
@@ -192,4 +191,4 @@ If you did not requested a password reset, please ignore this email or reply to 
     };
 };
 
-module.exports = welcomeEmail;
+module.exports = contentEmail;
