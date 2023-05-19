@@ -13,11 +13,6 @@ const WaitList = asyncHandler(async (req, res) => {
     throw new Error("Please add your email");
   }
 
-  if (!name) {
-    res.status(400);
-    throw new Error("Please add your name");
-  }
-
   if (email) {
     let user = await Waitlist.findOne({ email });
 
@@ -31,12 +26,12 @@ const WaitList = asyncHandler(async (req, res) => {
       await Waitlist.create({
         _id: new mongoose.Types.ObjectId(),
         email,
-        name,
       });
     }
   }
 
   try {
+    const name = "Comrade";
     const emailTemplate = waitlist(name);
     const to = email;
     const subject = "Thanks For Joining";
@@ -59,9 +54,10 @@ const sendEmailToWaitlist = asyncHandler(async (req, res) => {
   const waitlistUsers = await Waitlist.find({}).select("email name -_id");
 
   try {
+    const name = "Comrade";
     for (let i = 0; i < waitlistUsers.length; i++) {
       const user = waitlistUsers[i];
-      const emailTemplate = contentemail(user.name, content);
+      const emailTemplate = contentemail(name, content);
       const subject = title;
       const to = user.email;
       const html = emailTemplate.html;
