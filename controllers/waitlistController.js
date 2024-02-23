@@ -6,7 +6,7 @@ const waitlist = require("../email/waitlist");
 const contentemail = require("../email/contentemail");
 
 const WaitList = asyncHandler(async (req, res) => {
-  const { email, name } = req.body;
+  const { email } = req.body;
 
   if (!email) {
     res.status(400);
