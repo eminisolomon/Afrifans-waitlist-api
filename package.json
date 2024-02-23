@@ -29,6 +29,7 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.2",
     "nodemon": "^2.0.20"
   },
   "repository": "https://github.com/devrealsolomon/Afrifans-waitlist-api.git"
